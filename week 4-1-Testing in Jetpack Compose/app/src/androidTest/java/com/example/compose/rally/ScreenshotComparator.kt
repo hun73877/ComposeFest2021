@@ -39,7 +39,7 @@ import java.io.FileOutputStream
 fun assertScreenshotMatchesGolden(
     goldenName: String,
     node: SemanticsNodeInteraction
-) {
+                                 ) {
     val bitmap = node.captureToImage().asAndroidBitmap()
 
     // Save screenshot to file for debugging

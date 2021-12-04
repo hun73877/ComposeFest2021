@@ -97,7 +97,7 @@ class AnimatingCircleTests {
                     modifier = Modifier.background(Color.White).size(320.dp),
                     proportions = listOf(0.25f, 0.5f, 0.25f),
                     colors = listOf(Color.Red, Color.DarkGray, Color.Black)
-                )
+                              )
             }
         }
     }

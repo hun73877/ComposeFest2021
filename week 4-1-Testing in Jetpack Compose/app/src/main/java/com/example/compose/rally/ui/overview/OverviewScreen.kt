@@ -16,8 +16,7 @@
 
 package com.example.compose.rally.ui.overview
 
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -50,6 +49,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.compose.rally.R
 import com.example.compose.rally.RallyScreen
@@ -68,7 +68,7 @@ fun OverviewBody(onScreenChange: (RallyScreen) -> Unit = {}) {
         modifier = Modifier
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
-    ) {
+          ) {
         AlertCard()
         Spacer(Modifier.height(RallyDefaultPadding))
         AccountsCard(onScreenChange)
@@ -92,33 +92,34 @@ private fun AlertCard() {
             },
             bodyText = alertMessage,
             buttonText = "Dismiss".uppercase(Locale.getDefault())
-        )
+                        )
     }
 
-    var currentTargetElevation by remember { mutableStateOf(1.dp) }
-    LaunchedEffect(Unit) {
-        // Start the animation
-        currentTargetElevation = 8.dp
-    }
-    val animatedElevation = animateDpAsState(
-        targetValue = currentTargetElevation,
-        animationSpec = tween(durationMillis = 500),
-        finishedListener = {
-            currentTargetElevation = if (currentTargetElevation > 4.dp) {
-                1.dp
-            } else {
-                8.dp
-            }
-        }
-    )
-    Card(elevation = animatedElevation.value) {
+//    var currentTargetElevation by remember {  mutableStateOf(1.dp) }
+//    LaunchedEffect(Unit) {
+//        // Start the animation
+//        currentTargetElevation = 8.dp
+//    }
+    val infiniteElevationAnimation = rememberInfiniteTransition()
+    val animatedElevation: Dp by infiniteElevationAnimation.animateValue(
+        initialValue = 1.dp,
+        targetValue = 8.dp,
+        typeConverter = Dp.VectorConverter,
+        animationSpec = infiniteRepeatable(
+            animation = tween(500),
+            repeatMode = RepeatMode.Reverse
+                                          )
+                                                                        )
+
+
+    Card(elevation = animatedElevation) {
         Column {
             AlertHeader {
                 showDialog = true
             }
             RallyDivider(
                 modifier = Modifier.padding(start = RallyDefaultPadding, end = RallyDefaultPadding)
-            )
+                        )
             AlertItem(alertMessage)
         }
     }
@@ -139,21 +140,21 @@ private fun AlertHeader(onClickSeeAll: () -> Unit) {
             .padding(RallyDefaultPadding)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
-    ) {
+       ) {
         Text(
             text = "Alerts",
             style = MaterialTheme.typography.subtitle2,
             modifier = Modifier.align(Alignment.CenterVertically)
-        )
+            )
         TextButton(
             onClick = onClickSeeAll,
             contentPadding = PaddingValues(0.dp),
             modifier = Modifier.align(Alignment.CenterVertically)
-        ) {
+                  ) {
             Text(
                 text = "SEE ALL",
                 style = MaterialTheme.typography.button,
-            )
+                )
         }
     }
 }
@@ -169,18 +170,18 @@ private fun AlertItem(message: String) {
             // we'd have to define the semantics properties explicitly.
             .semantics(mergeDescendants = true) {},
         horizontalArrangement = Arrangement.SpaceBetween
-    ) {
+       ) {
         Text(
             style = MaterialTheme.typography.body2,
             modifier = Modifier.weight(1f),
             text = message
-        )
+            )
         IconButton(
             onClick = {},
             modifier = Modifier
                 .align(Alignment.Top)
                 .clearAndSetSemantics {}
-        ) {
+                  ) {
             Icon(Icons.Filled.Sort, contentDescription = null)
         }
     }
@@ -198,14 +199,14 @@ private fun <T> OverviewScreenCard(
     colors: (T) -> Color,
     data: List<T>,
     row: @Composable (T) -> Unit
-) {
+                                  ) {
     Card {
         Column {
             Column(Modifier.padding(RallyDefaultPadding)) {
                 Text(text = title, style = MaterialTheme.typography.subtitle2)
                 val amountText = "$" + formatAmount(
                     amount
-                )
+                                                   )
                 Text(text = amountText, style = MaterialTheme.typography.h2)
             }
             OverViewDivider(data, values, colors)
@@ -222,7 +223,7 @@ private fun <T> OverViewDivider(
     data: List<T>,
     values: (T) -> Float,
     colors: (T) -> Color
-) {
+                               ) {
     Row(Modifier.fillMaxWidth()) {
         data.forEach { item: T ->
             Spacer(
@@ -230,7 +231,7 @@ private fun <T> OverViewDivider(
                     .weight(values(item))
                     .height(1.dp)
                     .background(colors(item))
-            )
+                  )
         }
     }
 }
@@ -250,13 +251,13 @@ private fun AccountsCard(onScreenChange: (RallyScreen) -> Unit) {
         data = UserData.accounts,
         colors = { it.color },
         values = { it.balance }
-    ) { account ->
+                      ) { account ->
         AccountRow(
             name = account.name,
             number = account.number,
             amount = account.balance,
             color = account.color
-        )
+                  )
     }
 }
 
@@ -275,13 +276,13 @@ private fun BillsCard(onScreenChange: (RallyScreen) -> Unit) {
         data = UserData.bills,
         colors = { it.color },
         values = { it.amount }
-    ) { bill ->
+                      ) { bill ->
         BillRow(
             name = bill.name,
             due = bill.due,
             amount = bill.amount,
             color = bill.color
-        )
+               )
     }
 }
 
@@ -292,7 +293,7 @@ private fun SeeAllButton(onClick: () -> Unit) {
         modifier = Modifier
             .height(44.dp)
             .fillMaxWidth()
-    ) {
+              ) {
         Text(stringResource(R.string.see_all))
     }
 }
