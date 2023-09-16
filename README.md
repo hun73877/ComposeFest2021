@@ -1,3 +1,7 @@
+# 수료 - 김성훈
+<img width="636" alt="스크린샷 2023-09-16 오후 3 24 53" src="https://github.com/winter-love-dev/ComposeFest2021/assets/26156815/e752289c-e144-4d33-9f1d-fae50bcc43eb">
+
+
 # ComposeFest2021
 
 안녕하세요 Compose 코드랩에 오신걸 환영합니다.  
